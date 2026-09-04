@@ -24,13 +24,15 @@ jobs:
         otp:
           - '26'
           - '27'
+          - '28'
         rebar3:
-          - '3.23.0'
+          - '3.24.0'
         openssl:
           - quictls
         os:
           - macos-14
           - macos-15
+          - macos-26
     runs-on: ${{ matrix.os }}
     steps:
 
@@ -173,7 +175,9 @@ jobs:
       # Create the GitHub Release
       - name: Create Release (empty)
         run: |
-          gh release create "${{ github.event.inputs.ref_name || github.ref_name }}" --title "quicer ${{ github.event.inputs.ref_name || github.ref_name }} Released" --notes "Automated release" --draft
+          tag="${{ github.event.inputs.ref_name || github.ref_name }}"
+          gh release view "$tag" >/dev/null 2>&1 || \
+            gh release create "$tag" --title "quicer $tag Released" --notes "Automated release" --draft
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
